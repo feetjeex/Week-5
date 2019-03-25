@@ -10,15 +10,15 @@ import java.util.Map;
 
 public class EntryDatabase extends SQLiteOpenHelper {
 
-    private static final String TAG = "MainActivity";
     Cursor cursor;
+    private static EntryDatabase instance;
 
+    // Constructor of the class
     private EntryDatabase(Context context) {
         super(context, "entries", null, 1);
     }
 
-    private static EntryDatabase instance;
-
+    // Checks if an instance already exists, if not: Creates one
     public static EntryDatabase getInstance(Context context) {
         if (instance != null) {
             return instance;
@@ -30,8 +30,11 @@ public class EntryDatabase extends SQLiteOpenHelper {
         }
     }
 
+    // Implements the insert method
     public long insert(JournalEntry journalEntry) {
 
+        // Establishes a connection with the database
+        // Assigns values to all the fields of the table in the database using data from the JournalEntry object
         getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put("Title", journalEntry.getTitle());
@@ -39,34 +42,36 @@ public class EntryDatabase extends SQLiteOpenHelper {
         contentValues.put("Mood", journalEntry.getMood());
         contentValues.put("Timestamp", journalEntry.getTimestamp());
 
+        // Returns the database upon success
         return getWritableDatabase().insert("entries", null, contentValues);
     }
 
+    // Method to select all rows from the database
     public Cursor selectAll() {
         SQLiteDatabase db;
         db = getWritableDatabase();
         cursor = db.rawQuery("SELECT * FROM entries", null);
+
+        // Returns the cursor containing all the rows from the database
         return cursor;
     }
 
+    // Method to create the table entries in the database
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         // Creates the table entries
         db.execSQL("create table entries (_id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT, Content TEXT, Mood INTEGER, Timestamp TEXT);");
-
-        db.execSQL("insert into entries (_id, Title, Content, Mood, Timestamp) VALUES (1, 'First Entry', 'This is the first entry', 1, '12:42 - 4/3/2019');");
-
-        db.execSQL("insert into entries (_id, Title, Content, Mood, Timestamp) VALUES (2, 'Second Entry', 'This is the second entry', 3, '12:42 - 9/3/2019');");
     }
 
+    // Method used to delete the old table entries and create a new one
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + "entries");
         onCreate(db);
     }
 
-
+    // Method used to delete a certain row in the table entries
     public Integer deleter(long _id) {
         SQLiteDatabase db = this.getWritableDatabase();
         String id =String.valueOf(_id);

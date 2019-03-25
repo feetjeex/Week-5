@@ -2,6 +2,7 @@ package com.example.journal;
 
 import java.io.Serializable;
 
+// Implements a JournalEntry object, and its Getters and Setters
 public class JournalEntry implements Serializable {
 
     private String title, content, timestamp;

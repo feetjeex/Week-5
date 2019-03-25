@@ -10,13 +10,13 @@
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="175dp"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:src="@drawable/ic_my_icon"
-        app:backgroundTint="@color/colorAccent"
-        app:fabSize="auto" />
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_gravity="bottom|right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:src="@drawable/plus"
+        app:backgroundTint="@color/colorAccent" />
 
     <ListView
         android:id="@+id/listView"

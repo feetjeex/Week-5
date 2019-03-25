@@ -23,8 +23,8 @@ public class MainActivity extends AppCompatActivity {
     Cursor cursor;
     EntryAdapter adapter;
     EntryDatabase db;
-    private static final String TAG = "MainActivity";
 
+    // Implements the onCreate method
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,41 +39,48 @@ public class MainActivity extends AppCompatActivity {
         ListView listView = findViewById(R.id.listView);
         AdapterView.OnItemClickListener listViewListener = new ClickViewListener();
         listView.setOnItemClickListener(listViewListener);
-
         AdapterView.OnItemLongClickListener lv = new LongClickViewListener();
         listView.setOnItemLongClickListener(lv);
 
+        // Declaration and initialization of a db object
         db = EntryDatabase.getInstance(this);
-
         cursor = db.selectAll();
+
+        // Declaration, initialization and assignment of a new EntryAdapter object
         adapter = new EntryAdapter(this, cursor);
         listView.setAdapter(adapter);
     }
 
+    // Method used to update the data
     private void updateData () {
         adapter.swapCursor(db.selectAll());
     }
 
+    // Implements the onClickListener for the floating action button
     private class fabMainActivityListener implements View.OnClickListener {
+
         @Override
         public void onClick(View v) {
+            // OnClick, transfers the user to the InputActivity
             Intent intent = new Intent(MainActivity.this, InputActivity.class);
             startActivity(intent);
         }
     }
 
-    //Title, Content, Mood, Timestamp
-
+    // Implements the OnItemClickListener for the ListView containing the JournalEntries
     private class ClickViewListener implements AdapterView.OnItemClickListener {
+
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+            // Declaring, initializing and assigning the fields of a JournalEntry from the cursor object
             Cursor clickedJournalEntry = (Cursor) parent.getItemAtPosition(position);
             String title = clickedJournalEntry.getString(1);
             String content = clickedJournalEntry.getString(2);
             int mood = clickedJournalEntry.getInt(3);
             String timestamp = clickedJournalEntry.getString(4);
 
-
+            // Transferring all the fields of a JournalEntry using a Bundle, and transferring the user to the DetailActivity
             Intent intent = new Intent(MainActivity.this, DetailActivity.class);
             Bundle extras = new Bundle();
             extras.putString("intent_title", title);
@@ -85,18 +92,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // Implementing the OnItemLongClickListener
     private class LongClickViewListener implements AdapterView.OnItemLongClickListener {
+
         @Override
         public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+            // Implementing the cursorDeleter which contains the data on the selected JournalEntry (to be deleted)
             Cursor cursorDeleter = (Cursor) parent.getItemAtPosition(position);
             EntryDatabase entryDatabase = getInstance(getApplicationContext());
             int columnNumber = cursorDeleter.getColumnIndex("_id");
-            Log.d(TAG, "columnNumber: " + columnNumber);
             int idNumber = cursorDeleter.getInt(columnNumber);
-            Log.d(TAG, "idNumber: " + idNumber);
             int result = entryDatabase.deleter(idNumber);
-            Log.d(TAG, "result: " + result);
             updateData();
             return true;
         }
